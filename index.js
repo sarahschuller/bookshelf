@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
 
 // Mock Data
 let topBooks = [
@@ -30,6 +31,8 @@ app.get('/documentation', (req, res) => {
 app.get('/books', (req, res) => {
     res.json(topBooks);
 });
+
+app.use(morgan('common'));
 
 // listen for requests
 app.listen(1313, () => {
