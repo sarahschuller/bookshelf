@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 // Mock Data
 let topBooks = [
@@ -62,6 +63,10 @@ app.get('/books/authors/:authorName', (req, res) => {
     }
 })
 
+app.post('/users', (req, res) => {
+    const newUser = req.body;
+})
+
 // Use Morgan
 app.use(morgan('common'));
 
@@ -73,6 +78,8 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
   });
+
+app.use(bodyParser.json());
 
 // listen for requests
 app.listen(1313, () => {
