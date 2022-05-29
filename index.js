@@ -29,8 +29,38 @@ app.get('/documentation', (req, res) => {
 });
 
 app.get('/books', (req, res) => {
-    res.json(topBooks);
+    res.status(200).json(books);
 });
+
+app.get('/books/:title', (req, res) => {
+    const { title } = req.params;
+    const book = books.find(book => book.Title === title);
+    if (book) {
+        res.status(200).json(book);
+    }else{
+        res.status(400).send('Book not found')
+    }
+})
+
+app.get('/books/genre/:genreName', (req, res) => {
+    const { genreName } = req.params;
+    const genre = books.find(book => book.Genre.Name === genreName ).Genre;
+    if (book) {
+        res.status(200).json(genre);
+    }else{
+        res.status(400).send('Genre not found')
+    }
+})
+
+app.get('/books/authors/:authorName', (req, res) => {
+    const { authorName } = req.params;
+    const author = author.find(book => book.Author.Name === authorName ).Author;
+    if (book) {
+        res.status(200).json(author);
+    }else{
+        res.status(400).send('Author not found')
+    }
+})
 
 // Use Morgan
 app.use(morgan('common'));
