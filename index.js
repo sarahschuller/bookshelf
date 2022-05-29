@@ -2,9 +2,25 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const uuid = require('uuid');
+
+// Use Morgan
+app.use(morgan('common'));
+
+// Server static files
+app.use(express.static('public'));
+
+// Error Handling
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
+
+// Body Parser
+app.use(bodyParser.json());
 
 // Mock Data
-let topBooks = [
+let books = [
     {
       title: 'Harry Potter and the Sorcerer\'s Stone',
       author: 'J.K. Rowling'
@@ -18,6 +34,20 @@ let topBooks = [
       author: 'Stephanie Meyer'
     }
   ];
+
+let users = [
+    {
+        id: 1,
+        name: "Kim",
+        favoriteBooks: []
+    },
+
+    {
+        id: 2,
+        name: "Bob",
+        favoriteBooks: []
+    },
+]
 
 // GET requests
 app.get('/', (req, res) => {
@@ -65,21 +95,29 @@ app.get('/books/authors/:authorName', (req, res) => {
 
 app.post('/users', (req, res) => {
     const newUser = req.body;
+
+    if(newUser.name) {
+        newUser.id = uuid.v4();
+        users.push(newUser);
+        res.status(201).json(newUser)
+    }else{
+        res.status(400).send('users need names')
+    }
 })
 
-// Use Morgan
-app.use(morgan('common'));
+app.post('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const updatedUser = req.body;
 
-// Server static files
-app.use(express.static('public'));
+    let user = users.find(user => user.id == id);
 
-// error handling
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-  });
-
-app.use(bodyParser.json());
+    if (user) {
+        user.name = updatedUser.name;
+        res.status(200).json(user);
+    }else{
+        res.status(400).send('user not found')
+    }
+})
 
 // listen for requests
 app.listen(1313, () => {
