@@ -32,7 +32,17 @@ app.get('/books', (req, res) => {
     res.json(topBooks);
 });
 
+// Use Morgan
 app.use(morgan('common'));
+
+// Server static files
+app.use(express.static('public'));
+
+// error handling
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
 
 // listen for requests
 app.listen(1313, () => {
